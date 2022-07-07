@@ -26,6 +26,7 @@ subreddit = reddit.subreddit(subreddit_name)
 
 # retrieves all new submissions
 # they are ordered from newest to oldest
+# TODO: Need to filter out posts that have already been responded to
 def search_parse_command():
     submission_list = []
     command = ''
