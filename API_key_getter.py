@@ -55,6 +55,3 @@ def get_reddit_secret_key():
 
 def get_reddit_user_agent():
     return info[5].strip()
-
-
-
