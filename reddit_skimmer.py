@@ -1,4 +1,3 @@
-from sympy import false, true
 import API_key_getter as API
 import praw
 import re
@@ -40,29 +39,29 @@ def search_parse_command():
         command = regex_buy.search(submission_body)
         command_title = regex_buy.search(submission_title)
         
-        duplicate_flag = false
+        duplicate_flag = False
         if command_title or command:
             if command and not duplicate_flag:
                 text = command[0].split()
                 submission_list.append([submission.id, text[0], text[1], submission_user])
-                duplicate_flag = true
+                duplicate_flag = True
             if command_title and not duplicate_flag:
                 text = command_title[0].split()
                 submission_list.append([submission.id, text[0], text[1], submission_user])
-                duplicate_flag = true
+                duplicate_flag = True
         # checks for sell command
         command = regex_sell.search(submission_body)
         command_title = regex_sell.search(submission_title)
-        duplicate_flag = false
+        duplicate_flag = False
         if command_title or command:
             if command and not duplicate_flag:
                 text = command[0].split()
                 submission_list.append([submission.id, text[0], text[1], submission_user])
-                duplicate_flag = true
+                duplicate_flag = True
             if command_title and not duplicate_flag:
                 text = command_title[0].split()
                 submission_list.append([submission.id, text[0], text[1], submission_user])
-                duplicate_flag = true
+                duplicate_flag = True
     return submission_list
 
 # replys to a specific submission. requires ID and reply text
