@@ -1,3 +1,4 @@
+from sympy import false, true
 import API_key_getter as API
 import praw
 import re
@@ -32,18 +33,36 @@ def search_parse_command():
     for submission in reddit.subreddit(subreddit_name).new():
         submission = reddit.submission(submission.id)
         submission_body = submission.selftext
+        submission_title = submission.title
+        submission_user = submission.author.name
 
         # checks for buy command
         command = regex_buy.search(submission_body)
-        if command:
-            text = command[0].split()
-            submission_list.append([submission.id, text[0], text[1]])
-
+        command_title = regex_buy.search(submission_title)
+        
+        duplicate_flag = false
+        if command_title or command:
+            if command and not duplicate_flag:
+                text = command[0].split()
+                submission_list.append([submission.id, text[0], text[1], submission_user])
+                duplicate_flag = true
+            if command_title and not duplicate_flag:
+                text = command_title[0].split()
+                submission_list.append([submission.id, text[0], text[1], submission_user])
+                duplicate_flag = true
         # checks for sell command
         command = regex_sell.search(submission_body)
-        if command:
-            text = command[0].split()
-            submission_list.append([submission.id, text[0], text[1]])
+        command_title = regex_sell.search(submission_title)
+        duplicate_flag = false
+        if command_title or command:
+            if command and not duplicate_flag:
+                text = command[0].split()
+                submission_list.append([submission.id, text[0], text[1], submission_user])
+                duplicate_flag = true
+            if command_title and not duplicate_flag:
+                text = command_title[0].split()
+                submission_list.append([submission.id, text[0], text[1], submission_user])
+                duplicate_flag = true
     return submission_list
 
 # replys to a specific submission. requires ID and reply text
