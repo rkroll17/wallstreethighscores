@@ -1,4 +1,3 @@
-import os
 import finnhub
 import API_key_getter
 
@@ -9,3 +8,6 @@ finnhub_client = finnhub.Client(api_key=my_api_key)
 # Finnhub does not update by the minute
 def get_stock_price(ticker):
     return finnhub_client.quote(ticker)["c"]
+
+def get_stock_profile(ticker):
+    return finnhub_client.company_profile2(symbol=ticker)
