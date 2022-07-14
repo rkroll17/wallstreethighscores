@@ -9,7 +9,7 @@ from google.cloud import storage
 from keys import database_keys
 
 # authentication to the google cloud
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "keys\google_auth.json"
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "google_auth.json"
 
 
 # authentication to the SQL database
