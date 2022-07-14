@@ -205,6 +205,8 @@ def close_position(userHandle, ticker, closePrice, points, closeDate = None, sub
     if closeDate:
         command += ", CloseDate = %s"
         escape += [closeDate]
+    else:
+        command +=", CloseDate = CURRENT_TIMESTAMP"
     if submissionID:
         command += ", CloseID = %s"
         escape += [submissionID]
