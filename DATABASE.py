@@ -93,7 +93,7 @@ def find_user_id(userHandle):
 # Opens a position given a userHandle, ticker, and openPrice; with optional openDate, confidence, and submissionID
 # openDate format: YYYY-MM-DD hh:mm:ss
 # confidence is INT -1 = low, 0 = neutral, 1 = high
-def open_position(userHandle, ticker, openPrice,  openDate = None, confidence = None, submissionID = None):
+def open_position(userHandle, ticker, openPrice, submissionID, openDate = None, confidence = None):
 
     try:
         if get_open_ticker(userHandle, ticker):
@@ -112,7 +112,10 @@ def open_position(userHandle, ticker, openPrice,  openDate = None, confidence = 
         values += ", '" + openDate + "'"
     if confidence:
         command += ", Confidence"
-        values += ", '" + str(confidence) + "'"
+        values += ", " + str(confidence)
+    else:
+        command += ", Confidence"
+        values += ", 0"
     if submissionID:
         command += ", OpenID"
         values += ", %s"
@@ -199,7 +202,7 @@ def get_open_ticker(userHandle, ticker):
 
 # Closes the position given the userHandle (string), ticker (string), close price (double),
 # points (int) the position was worth, and optionally the close date (format: YYYY-MM-DD hh:mm:ss)
-def close_position(userHandle, ticker, closePrice, points, closeDate = None, submissionID = None):
+def close_position(userHandle, ticker, closePrice, points, submissionID, closeDate = None):
     command = "UPDATE Positions SET ClosePrice = %s, Points = %s, PositionStatus = FALSE"
     escape = [closePrice, points]
     if closeDate:
