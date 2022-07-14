@@ -20,7 +20,8 @@ CREATE TABLE IF NOT EXISTS Positions (
   Points BIGINT,
   Confidence INT(1),
   PositionStatus BOOL NOT NULL DEFAULT TRUE,
-  SubmissionID VARCHAR(6),
+  OpenID VARCHAR(6),
+  CloseID VARCHAR(6),
   PRIMARY KEY (PositionID),
   FOREIGN KEY (UserID) REFERENCES Users(UserID)
 );

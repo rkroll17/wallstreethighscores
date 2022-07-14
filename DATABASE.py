@@ -114,7 +114,7 @@ def open_position(userHandle, ticker, openPrice,  openDate = None, confidence = 
         command += ", Confidence"
         values += ", '" + str(confidence) + "'"
     if submissionID:
-        command += ", SubmissionID"
+        command += ", OpenID"
         values += ", %s"
         escape += [submissionID]
     
@@ -171,12 +171,15 @@ def get_open_ticker(userHandle, ticker):
 
 # Closes the position given the userHandle (string), ticker (string), close price (double),
 # points (int) the position was worth, and optionally the close date (format: YYYY-MM-DD hh:mm:ss)
-def close_position(userHandle, ticker, closePrice, points, closeDate = None):
+def close_position(userHandle, ticker, closePrice, points, closeDate = None, submissionID = None):
     command = "UPDATE Positions SET ClosePrice = %s, Points = %s, PositionStatus = FALSE"
     escape = [closePrice, points]
     if closeDate:
         command += ", CloseDate = %s"
         escape += [closeDate]
+    if submissionID:
+        command += ", CloseID = %s"
+        escape += [submissionID]
     try:
         values = " WHERE UserID = " + str(find_user_id(userHandle)) + " AND Ticker = %s AND PositionStatus = 1"
     except:
