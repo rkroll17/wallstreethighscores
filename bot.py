@@ -27,11 +27,11 @@ def sell_stock(id, ticker, user):
 
 def get_user_overview(user):
     try:
-        positions = db.get_positions
+        positions = db.get_positions(user)
         overview = user + "\'s account overview: \n\n"
         overview += f"Score: {db.get_score(user)}\n"
-        overview += f"Total # of positions: {db.get_num_positions}\n"
-        overview += f"Total # of open positions: {db.get_num_open_positions}\n"
+        overview += f"Total # of positions: {db.get_num_positions(user)}\n"
+        overview += f"Total # of open positions: {db.get_num_open_positions(user)}\n"
         overview += "Last 10 positions:\n"
         overview += "Ticker | Status | Open Price | Close Price \n"
         overview += ":--:|:--:|:--:|:--:\n"
@@ -47,9 +47,12 @@ def get_user_overview(user):
             i += 1
             if i > 9:
                 break
+        else:
+            overview = overview[:-1]
     except Exception as err:
         print(err)
         overview = "Could not fetch overview for " + user
+    print(overview)
     return overview
 
 def get_stock_summary(ticker):
@@ -85,6 +88,6 @@ def read_posts(count):
             return
             
 #read_posts()
-get_user_overview("TestUser1")
+#get_user_overview("TestUser1")
             
     
