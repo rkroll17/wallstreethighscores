@@ -11,8 +11,10 @@ USER_AGENT = API.get_reddit_user_agent()
 
 buy_text = "![bB][uU][yY] \w\w\w\w"
 sell_text = "![sS][eE][lL][lL] \w\w\w\w"
+myscore_text = "![mM][yY]_[sS][cC][oO][rR][eE]"
 regex_buy = re.compile(buy_text)
 regex_sell = re.compile(sell_text)
+regex_myscore = re.compile(myscore_text)
 
 reddit = praw.Reddit(
     client_id= CLIENT_ID,
@@ -62,6 +64,19 @@ def search_parse_command():
             if command_title and not duplicate_flag:
                 text = command_title[0].split()
                 submission_list.append([submission.id, text[0], text[1], submission_user])
+                duplicate_flag = True
+        # checks for myscore command
+        command = regex_myscore.search(submission_body)
+        command_title = regex_myscore.search(submission_title)
+        duplicate_flag = False
+        if command_title or command:
+            if command and not duplicate_flag:
+                text = command[0].split()
+                submission_list.append([submission.id, text[0], submission_user])
+                duplicate_flag = True
+            if command_title and not duplicate_flag:
+                text = command_title[0].split()
+                submission_list.append([submission.id, text[0], submission_user])
                 duplicate_flag = True
     return submission_list
 
