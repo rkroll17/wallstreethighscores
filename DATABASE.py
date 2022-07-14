@@ -218,6 +218,10 @@ def close_position(userHandle, ticker, closePrice, points, submissionID, closeDa
     except:
         raise
     escape += [ticker]
+    try:
+        add_score(userHandle, points)
+    except:
+        raise
     
 
     with pool.connect() as db:
