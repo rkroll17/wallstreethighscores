@@ -78,7 +78,7 @@ def create_user(userHandle, joinDate = None, score = None, status = True):
             db.execute(command + values, escape)
 
 
-# finds a user with a given user handle. Returns null if not found
+# finds a user with a given user handle. Returns None if not found
 def find_user(userHandle):
     command = "SELECT * FROM Users WHERE UserHandle = %s"
     with pool.connect() as db:
@@ -86,7 +86,7 @@ def find_user(userHandle):
         if result:
             return result
         else:
-            return Null
+            return None
 
 # gets a user's internal ID using thier userHandle
 def find_user_id(userHandle):
@@ -94,7 +94,7 @@ def find_user_id(userHandle):
     if result:
         return result[0][0]
     else:
-        return Null
+        return None
 
 # Opens a position given a userHandle, ticker, and openPrice; with optional openDate, confidence, and submissionID
 # openDate format: YYYY-MM-DD hh:mm:ss
@@ -123,7 +123,7 @@ def open_position(userHandle, ticker, openPrice,  openDate = None, confidence = 
     with pool.connect() as db:
         db.execute(command + values, escape)
 
-# Gets all positions of a user, returns Null if none found
+# Gets all positions of a user, returns None if none found
 def get_positions(userHandle):
     command = "SELECT * FROM Positions WHERE UserID = " + str(find_user(userHandle))
     with pool.connect() as db:
@@ -132,9 +132,9 @@ def get_positions(userHandle):
             return results
         else:
             # none found
-            return Null
+            return None
 
-# Gets all open positions of a user, returns Null if none found
+# Gets all open positions of a user, returns None if none found
 def get_open_positions(userHandle):
     command = "SELECT * FROM Positions WHERE UserID = " + str(find_user(userHandle)) + " AND PositionStatus = 1"
     with pool.connect() as db:
@@ -143,7 +143,7 @@ def get_open_positions(userHandle):
             return results
         else:
             # none found
-            return Null
+            return None
 
 #gets open positions with a specific ticker for a user
 def get_open_ticker(userHandle, ticker):
@@ -154,19 +154,47 @@ def get_open_ticker(userHandle, ticker):
             return results
         else:
             # none found
-            return Null
+            return None
 
-# TO-DO: close_position()
+# Closes the position given the userHandle (string), ticker (string), close price (double),
+# points (int) the position was worth, and optionally the close date (format: YYYY-MM-DD hh:mm:ss)
+def close_position(userHandle, ticker, closePrice, points, closeDate = None):
+    command = "UPDATE Positions SET ClosePrice = %s, Points = %s, PositionStatus = FALSE"
+    escape = [closePrice, points]
+    if closeDate:
+        command += ", CloseDate = %s"
+        escape += [closeDate]
+    
+    values = " WHERE UserID = " + str(find_user_id(userHandle)) + " AND Ticker = %s AND PositionStatus = 1"
+    escape += [ticker]
+    
+
+    with pool.connect() as db:
+        db.execute(command+values, escape)
+
+# Replaces a user score when given the user handle (string), and the new score (int)
+def replace_score(userHandle, newScore):
+    command = "UPDATE Users Set Score = " + str(newScore) + " WHERE UserHandle = %s"
+    escape = (userHandle,)
+    with pool.connect() as db:
+        db.execute(command, escape)
+
+# Adds to a users score given a user handle (string) and the score (int) to be added.
+def update_score(userHandle, addScore):
+    command = "UPDATE Users Set Score = " + str(get_score(userHandle) + addScore) + " WHERE UserHandle = %s"
+    escape = (userHandle,)
+    with pool.connect() as db:
+        db.execute(command, escape)
 
 # gets the score of a user given a userHandle
 def get_score(userHandle):
     command = "SELECT Score from Users WHERE UserHandle = %s"
     with pool.connect() as db:
-        result = db.execute(command, (userHandle,))
+        result = db.execute(command, (userHandle,)).fetchall()
         if result:
-            return result
+            return result[0][0]
         else:
-            return Null
+            return None
 
 
 #when we're done close the connection
