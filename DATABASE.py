@@ -218,16 +218,16 @@ def close_position(userHandle, ticker, closePrice, points, submissionID, closeDa
     except:
         raise
     escape += [ticker]
-    try:
-        add_score(userHandle, points)
-    except:
-        raise
     
 
     with pool.connect() as db:
         results = db.execute(command+values, escape)
         if not results:
             raise Exception("No affected rows, or input/database error")
+        try:
+            add_score(userHandle, points)
+        except:
+            raise
 
 # Replaces a user score when given the user handle (string), and the new score (int)
 def replace_score(userHandle, newScore):
