@@ -141,6 +141,34 @@ def get_positions(userHandle):
             # none found
             return None
 
+# Gets number of position of a user. Returns 0 if none found
+def get_num_positions(userHandle):
+    try:
+        command = "SELECT COUNT(PositionID) FROM Positions WHERE UserID = " + str(find_user_id(userHandle))
+    except:
+        raise
+    with pool.connect() as db:
+        results = db.execute(command).fetchall()
+        if results:
+            return results[0][0]
+        else:
+            # none found
+            return 0
+
+# Gets number of open position of a user. Returns 0 if none found
+def get_num_open_positions(userHandle):
+    try:
+        command = "SELECT COUNT(PositionID) FROM Positions WHERE UserID = " + str(find_user_id(userHandle)) + " AND PositionStatus = TRUE"
+    except:
+        raise
+    with pool.connect() as db:
+        results = db.execute(command).fetchall()
+        if results:
+            return results[0][0]
+        else:
+            # none found
+            return 0
+
 # Gets all open positions of a user, returns None if none found
 def get_open_positions(userHandle):
     try:
