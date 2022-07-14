@@ -38,19 +38,12 @@ pool = sqlalchemy.create_engine(
     creator=getconn,
 )
 
-# #connect and run queries
-# with pool.connect() as db_conn:
-#     results = db_conn.execute("SELECT * FROM Users").fetchall()
-#     # show results
-#     print(results)
-#     for row in results:
-#         print(row)
-
-
 
 # userHandle = Username, joinDate(optional) = date opt in, score(optional) = score, status(optional) = boolean
 # joinDate format: YYYY-MM-DD hh:mm:ss
-def create_user(userHandle, joinDate = None, score = None, status = True):
+def create_user(userHandle, score = 0, joinDate = None, status = True):
+    if (find_user(userHandle)):
+        raise Exception("User Already Exists")
     command = "INSERT INTO Users (UserHandle"
     values = " VALUES (%s"
     escape = [userHandle]
@@ -71,11 +64,9 @@ def create_user(userHandle, joinDate = None, score = None, status = True):
         values=+", ' 0')"
 
     with pool.connect() as db:
-        result = db.execute("SELECT UserHandle FROM Users WHERE UserHandle = %s;", (userHandle,)).fetchall()
-        if result:
-            print("Error: User already exists")
-        else:
-            db.execute(command + values, escape)
+        result = db.execute(command + values, escape)
+        if not result:
+            raise Exception("Invalid input, Database Error")
 
 
 # finds a user with a given user handle. Returns None if not found
@@ -90,7 +81,10 @@ def find_user(userHandle):
 
 # gets a user's internal ID using thier userHandle
 def find_user_id(userHandle):
-    result = find_user(userHandle)
+    try:
+        result = find_user(userHandle)
+    except:
+        raise
     if result:
         return result[0][0]
     else:
@@ -101,11 +95,17 @@ def find_user_id(userHandle):
 # confidence is INT -1 = low, 0 = neutral, 1 = high
 def open_position(userHandle, ticker, openPrice,  openDate = None, confidence = None, submissionID = None):
 
-    if get_open_ticker(userHandle, ticker):
-        return #that position is already open
+    try:
+        if get_open_ticker(userHandle, ticker):
+            raise Exception("Position already open")
+    except:
+        raise
 
     command = "INSERT INTO Positions ( UserID, Ticker, OpenPrice"
-    values = "VALUES (" + str(find_user_id(userHandle)) + ", %s, " + str(openPrice)
+    try:
+        values = "VALUES (" + str(find_user_id(userHandle)) + ", %s, " + str(openPrice)
+    except:
+        raise
     escape = [ticker]
     if openDate:
         command += ", OpenDate"
@@ -121,11 +121,18 @@ def open_position(userHandle, ticker, openPrice,  openDate = None, confidence = 
     command += ") "
     values += ")"
     with pool.connect() as db:
-        db.execute(command + values, escape)
+        result = db.execute(command + values, escape)
+        if not result:
+            raise Exception("Invalid input, Database error")
+
+
 
 # Gets all positions of a user, returns None if none found
 def get_positions(userHandle):
-    command = "SELECT * FROM Positions WHERE UserID = " + str(find_user(userHandle))
+    try:
+        command = "SELECT * FROM Positions WHERE UserID = " + str(find_user_id(userHandle))
+    except:
+        raise
     with pool.connect() as db:
         results = db.execute(command).fetchall()
         if results:
@@ -136,7 +143,10 @@ def get_positions(userHandle):
 
 # Gets all open positions of a user, returns None if none found
 def get_open_positions(userHandle):
-    command = "SELECT * FROM Positions WHERE UserID = " + str(find_user(userHandle)) + " AND PositionStatus = 1"
+    try:
+        command = "SELECT * FROM Positions WHERE UserID = " + str(find_user_id(userHandle)) + " AND PositionStatus = 1"
+    except:
+        raise
     with pool.connect() as db:
         results = db.execute(command).fetchall()
         if results:
@@ -147,7 +157,10 @@ def get_open_positions(userHandle):
 
 #gets open positions with a specific ticker for a user
 def get_open_ticker(userHandle, ticker):
-    command = "SELECT * FROM Positions WHERE UserID = " + str(find_user_id(userHandle)) + " AND Ticker = %s AND PositionStatus = 1"
+    try:
+        command = "SELECT * FROM Positions WHERE UserID = " + str(find_user_id(userHandle)) + " AND Ticker = %s AND PositionStatus = 1"
+    except:
+        raise
     with pool.connect() as db:
         results = db.execute(command, (ticker,)).fetchall()
         if results:
@@ -164,27 +177,41 @@ def close_position(userHandle, ticker, closePrice, points, closeDate = None):
     if closeDate:
         command += ", CloseDate = %s"
         escape += [closeDate]
-    
-    values = " WHERE UserID = " + str(find_user_id(userHandle)) + " AND Ticker = %s AND PositionStatus = 1"
+    try:
+        values = " WHERE UserID = " + str(find_user_id(userHandle)) + " AND Ticker = %s AND PositionStatus = 1"
+    except:
+        raise
     escape += [ticker]
     
 
     with pool.connect() as db:
-        db.execute(command+values, escape)
+        results = db.execute(command+values, escape)
+        if not results:
+            raise Exception("No affected rows, or input/database error")
 
 # Replaces a user score when given the user handle (string), and the new score (int)
 def replace_score(userHandle, newScore):
-    command = "UPDATE Users Set Score = " + str(newScore) + " WHERE UserHandle = %s"
+    try:
+        command = "UPDATE Users Set Score = " + str(newScore) + " WHERE UserHandle = %s"
+    except:
+        raise
     escape = (userHandle,)
     with pool.connect() as db:
-        db.execute(command, escape)
+        results = db.execute(command, escape)
+        if not results:
+            raise Exception("Invalid input/database error")
 
 # Adds to a users score given a user handle (string) and the score (int) to be added.
-def update_score(userHandle, addScore):
-    command = "UPDATE Users Set Score = " + str(get_score(userHandle) + addScore) + " WHERE UserHandle = %s"
+def add_score(userHandle, addScore):
+    try:
+        command = "UPDATE Users Set Score = " + str(get_score(userHandle) + addScore) + " WHERE UserHandle = %s"
+    except:
+        raise
     escape = (userHandle,)
     with pool.connect() as db:
-        db.execute(command, escape)
+        result = db.execute(command, escape)
+        if not result:
+            raise Exception("No result/invalid input/database error")
 
 # gets the score of a user given a userHandle
 def get_score(userHandle):
