@@ -1,3 +1,4 @@
+from turtle import position
 import STAPI as st
 import reddit_skimmer as rs
 import DATABASE as db
@@ -25,7 +26,30 @@ def sell_stock(id, ticker, user):
     
 
 def get_user_overview(user):
-    overview = user + "\'s overview"
+    try:
+        positions = db.get_positions
+        overview = user + "\'s account overview: \n\n"
+        overview += f"Score: {db.get_score(user)}\n"
+        overview += f"Total # of positions: {db.get_num_positions}\n"
+        overview += f"Total # of open positions: {db.get_num_open_positions}\n"
+        overview += "Last 10 positions:\n"
+        overview += "Ticker | Status | Open Price | Close Price \n"
+        overview += ":--:|:--:|:--:|:--:\n"
+        i = 0
+        for pos in positions:
+            if pos[6] == "Null":
+                status = "Open"
+                close_price = "-"
+            else:
+                status = "Closed"
+                close_price = str(pos[6])
+            overview += f"{pos[2]} | {status} | {str(pos[4])} | {close_price}\n"
+            i += 1
+            if i > 9:
+                break
+    except Exception as err:
+        print(err)
+        overview = "Could not fetch overview for " + user
     return overview
 
 def get_stock_summary(ticker):
@@ -60,6 +84,7 @@ def read_posts(count):
         else:
             return
             
-read_posts()
+#read_posts()
+get_user_overview("TestUser1")
             
     
