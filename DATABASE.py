@@ -276,10 +276,10 @@ def find_id(submissionID):
     command = "SELECT COUNT(PositionID) FROM Positions WHERE OpenID = %s OR CloseID = %s"
     escape = (submissionID, submissionID)
     with pool.connect() as db:
-        result = db.execute(command, escape)
-        if result:
-            return True
-        return False
+        result = db.execute(command, escape).fetchall()
+        if result[0][0] == 0:
+            return False
+        return True
 
 
 

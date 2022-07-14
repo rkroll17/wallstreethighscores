@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS Positions (
   OpenDate DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   OpenPrice DOUBLE(10,4) NOT NULL,
   CloseDate DATETIME,
-  ClosePrice FLOAT(10,4),
+  ClosePrice DOUBLE(10,4),
   Points BIGINT,
   Confidence INT(1),
   PositionStatus BOOL NOT NULL DEFAULT TRUE,
