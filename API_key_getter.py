@@ -2,12 +2,9 @@
 # module is designed to obsficate keys
 # it assumes that the files are in the same folder as this module
 # ---------------------------------------
-import os
 
-os.chdir('keys')
-
-finn_filename = 'FinnHubAPIKey.txt' # file that contains finnhub
-reddit_filename = 'reddit_key.txt' # file that contains reddit info
+finn_filename = 'keys/FinnHubAPIKey.txt' # file that contains finnhub
+reddit_filename = 'keys/reddit_key.txt' # file that contains reddit info
 
 
 def get_finn_key():
@@ -55,3 +52,4 @@ def get_reddit_secret_key():
 
 def get_reddit_user_agent():
     return info[5].strip()
+
