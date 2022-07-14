@@ -1,26 +1,28 @@
 import STAPI as st
 import reddit_skimmer as rs
+import DATABASE as db
 
-def get_new_posts():
-    # posts = rs.search_parse_command()
-    pass
+reddit_rq_counter = int
     
+# send position to database and build/send reply comment
 def buy_stock(id, ticker, user):
-    #print(id, " bought ", ticker)
     ticker_price = st.get_stock_price(ticker)
     if ticker_price == 0:
         reply_text = "Sorry, " + user + ". " + ticker + " is an invalid ticker or is not supported by our bot."
     else:
+        db.open_position(user, ticker, ticker_price, submissionID=id)
         reply_text = user + ", you have bought " + ticker + " @ $" + str(ticker_price) + "\n\n" + get_stock_summary(ticker)
     print(reply_text)
     #rs.reply_submission(id, reply_text)
     
+    
+# send position to database and build/send reply comment
 def sell_stock(id, ticker, user):
-    #print(id, " sold ", ticker)
     ticker_price = st.get_stock_price(ticker)
     reply_text = user + ", you have sold " + ticker + " @ $" + str(ticker_price) + "\n\n" + get_stock_summary(ticker)
     print(reply_text)
     #rs.reply_submission(id, reply_text)
+    
 
 def get_user_overview(user):
     overview = user + "\'s overview"
@@ -36,20 +38,27 @@ def invalid_command(id, command, user):
     reply_text = "Sorry " + user + ": " + command + " is not a valid command"
     #rs.reply_submission(id, reply_text)
     
-def read_posts():
+    
+def read_posts(count):
+    reddit_rq_counter = count
     posts = rs.search_parse_command()
+    reddit_rq_counter += 1
     #posts = [['dfjsld', '!my_score', '', 'john_cena']]
     
     for p in posts:
-        if p[1].upper() == "!BUY":
-            buy_stock(p[0], p[2], p[3])
-        elif p[1].upper() == "!SELL":
-            sell_stock(p[0], p[2], p[3])
-        elif p[1].upper() == "!MY_SCORE":
-            print(get_user_overview(p[3]))
-            #rs.reply_submission(p[0], get_overview(p[3]))
+        if reddit_rq_counter < 60:
+            if p[1].upper() == "!BUY":
+                buy_stock(p[0], p[2], p[3])
+            elif p[1].upper() == "!SELL":
+                sell_stock(p[0], p[2], p[3])
+            elif p[1].upper() == "!MY_SCORE":
+                print(get_user_overview(p[3]))
+                #rs.reply_submission(p[0], get_overview(p[3]))
+            else:
+                invalid_command(p[0], p[1], p[3])
+            reddit_rq_counter += 1
         else:
-            invalid_command(p[0], p[1], p[3])
+            return
             
 read_posts()
             
