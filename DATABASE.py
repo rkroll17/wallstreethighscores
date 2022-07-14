@@ -52,10 +52,9 @@ def create_user(userHandle, score = 0, joinDate = None, status = True):
         values+=", %s"
         escape+=[joinDate]
     
-    if score:
-        command+=", Score"
-        values+=", %s"
-        escape+=[score]
+    command+=", Score"
+    values+=", %s"
+    escape+=[score]
 
     command+=", Status)"
     if status:
@@ -271,7 +270,7 @@ def get_score(userHandle):
         else:
             return None
 
-# looks for a given ID in the database and returns true or false
+# looks for a given ID in the database and returns true if found or false if none.
 def find_id(submissionID):
     command = "SELECT COUNT(PositionID) FROM Positions WHERE OpenID = %s OR CloseID = %s"
     escape = (submissionID, submissionID)
