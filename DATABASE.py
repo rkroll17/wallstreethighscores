@@ -256,6 +256,17 @@ def get_score(userHandle):
         else:
             return None
 
+# looks for a given ID in the database and returns true or false
+def find_id(submissionID):
+    command = "SELECT COUNT(PositionID) FROM Positions WHERE OpenID = %s OR CloseID = %s"
+    escape = (submissionID, submissionID)
+    with pool.connect() as db:
+        result = db.execute(command, escape)
+        if result:
+            return True
+        return False
+
+
 
 #when we're done close the connection
 connector.close()
