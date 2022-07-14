@@ -72,11 +72,13 @@ def search_parse_command():
         if command_title or command:
             if command and not duplicate_flag:
                 text = command[0].split()
-                submission_list.append([submission.id, text[0], submission_user])
+                # empty string is done so that in bot.py the submision user is the same
+                # position across all commands
+                submission_list.append([submission.id, text[0], "", submission_user])
                 duplicate_flag = True
             if command_title and not duplicate_flag:
                 text = command_title[0].split()
-                submission_list.append([submission.id, text[0], submission_user])
+                submission_list.append([submission.id, text[0], "", submission_user])
                 duplicate_flag = True
     return submission_list
 
