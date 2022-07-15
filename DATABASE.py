@@ -280,54 +280,81 @@ def find_id(submissionID):
             return False
         return True
 
-# Gets the weekly highscore. Returns as Username, Points
+# Gets the daily 10 highscores. Returns as Username, Points
+def daily_high_score():
+    statement = """SELECT u.UserHandle, SUM(p.Points) AS total 
+    FROM Positions AS p 
+    JOIN Users AS u ON p.UserID = u.UserID 
+    WHERE CloseDate BETWEEN SUBDATE(CURRENT_TIMESTAMP, 1) AND CURRENT_TIMESTAMP 
+    GROUP BY p.UserID ORDER BY total DESC LIMIT 10"""
+
+    with pool.connect() as db:
+        result = db.execute(statement).fetchall()
+        if result:
+            return result
+        else:
+            return None
+
+
+# Gets the weekly 10 highscores. Returns as Username, Points
 def weekly_high_score():
-    statement = """"SELECT u.UserHandle, SUM(p.Points) AS total 
+    statement = """SELECT u.UserHandle, SUM(p.Points) AS total 
     FROM Positions AS p 
     JOIN Users AS u ON p.UserID = u.UserID 
     WHERE CloseDate BETWEEN SUBDATE(CURRENT_TIMESTAMP, 7) AND CURRENT_TIMESTAMP 
-    GROUP BY p.UserID ORDER BY total DESC"""
+    GROUP BY p.UserID ORDER BY total DESC LIMIT 10"""
 
     with pool.connect() as db:
-        result = db.execute(command).fetchall()
-        if result[0][0]:
+        result = db.execute(statement).fetchall()
+        if result:
             return result
         else:
             return None
 
+# Returns the monthly 10 highscores. Returns as Username, Points
 def monthly_high_score():
-    statement = """"SELECT u.UserHandle, SUM(p.Points) AS total 
+    statement = """SELECT u.UserHandle, SUM(p.Points) AS total 
     FROM Positions AS p 
     JOIN Users AS u ON p.UserID = u.UserID 
     WHERE CloseDate BETWEEN SUBDATE(CURRENT_TIMESTAMP, INTERVAL 1 MONTH) AND CURRENT_TIMESTAMP 
-    GROUP BY p.UserID ORDER BY total DESC"""
+    GROUP BY p.UserID ORDER BY total DESC LIMIT 10"""
 
     with pool.connect() as db:
-        result = db.execute(command).fetchall()
-        if not result[0][0]:
+        result = db.execute(statement).fetchall()
+        if result:
             return result
         else:
             return None
 
+# Returns the yearly 10 highscores. Returns as Username, Points
+def yearly_high_score():
+    statement = """SELECT u.UserHandle, SUM(p.Points) AS total 
+    FROM Positions AS p 
+    JOIN Users AS u ON p.UserID = u.UserID 
+    WHERE CloseDate BETWEEN SUBDATE(CURRENT_TIMESTAMP, INTERVAL 1 YEAR) AND CURRENT_TIMESTAMP 
+    GROUP BY p.UserID ORDER BY total DESC LIMIT 10"""
+
+    with pool.connect() as db:
+        result = db.execute(statement).fetchall()
+        if result:
+            return result
+        else:
+            return None
+
+# Returns the all time 10 high scores. Returns as Username, Points
 def high_score():
-    statement = """"SELECT u.UserHandle, SUM(p.Points) AS total 
+    statement = """SELECT u.UserHandle, SUM(p.Points) AS total 
     FROM Positions AS p 
     JOIN Users AS u ON p.UserID = u.UserID
     WHERE PositionStatus = FALSE 
-    GROUP BY p.UserID ORDER BY total DESC"""
+    GROUP BY p.UserID ORDER BY total DESC LIMIT 10"""
 
     with pool.connect() as db:
-        result = db.execute(command).fetchall()
-        if not result[0][0]:
+        result = db.execute(statement).fetchall()
+        if result:
             return result
         else:
             return None
-    
- 
- 
-
-GROUP BY p.UserID
-ORDER BY total DESC;
 
 
 #when we're done close the connection
