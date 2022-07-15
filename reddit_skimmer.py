@@ -97,16 +97,16 @@ def reddit_flairs():
 
 def award_best_trader_flair(reddit_username):
     r_flairs = reddit_flairs()
-    subreddit.flair.set(redd_username, text=r_flairs[0]['text'], flair_template_id=r_flairs[0]['id'])
+    subreddit.flair.set(reddit_username, text=r_flairs[0]['text'], flair_template_id=r_flairs[0]['id'])
 
 def award_2nd_best_trader_flair(reddit_username):
     r_flairs = reddit_flairs()
-    subreddit.flair.set(redd_username, text=r_flairs[1]['text'], flair_template_id=r_flairs[1]['id'])
+    subreddit.flair.set(reddit_username, text=r_flairs[1]['text'], flair_template_id=r_flairs[1]['id'])
 
 def award_3rd_best_trader_flair(reddit_username):
     r_flairs = reddit_flairs()
-    subreddit.flair.set(redd_username, text=r_flairs[2]['text'], flair_template_id=r_flairs[2]['id'])
+    subreddit.flair.set(reddit_username, text=r_flairs[2]['text'], flair_template_id=r_flairs[2]['id'])
 
 def award_top_100_trader_flair(reddit_username):
     r_flairs = reddit_flairs()
-    subreddit.flair.set(redd_username, text=r_flairs[3]['text'], flair_template_id=r_flairs[3]['id'])
+    subreddit.flair.set(reddit_username, text=r_flairs[3]['text'], flair_template_id=r_flairs[3]['id'])
