@@ -280,6 +280,54 @@ def find_id(submissionID):
             return False
         return True
 
+# Gets the weekly highscore. Returns as Username, Points
+def weekly_high_score():
+    statement = """"SELECT u.UserHandle, SUM(p.Points) AS total 
+    FROM Positions AS p 
+    JOIN Users AS u ON p.UserID = u.UserID 
+    WHERE CloseDate BETWEEN SUBDATE(CURRENT_TIMESTAMP, 7) AND CURRENT_TIMESTAMP 
+    GROUP BY p.UserID ORDER BY total DESC"""
+
+    with pool.connect() as db:
+        result = db.execute(command).fetchall()
+        if result[0][0]:
+            return result
+        else:
+            return None
+
+def monthly_high_score():
+    statement = """"SELECT u.UserHandle, SUM(p.Points) AS total 
+    FROM Positions AS p 
+    JOIN Users AS u ON p.UserID = u.UserID 
+    WHERE CloseDate BETWEEN SUBDATE(CURRENT_TIMESTAMP, INTERVAL 1 MONTH) AND CURRENT_TIMESTAMP 
+    GROUP BY p.UserID ORDER BY total DESC"""
+
+    with pool.connect() as db:
+        result = db.execute(command).fetchall()
+        if not result[0][0]:
+            return result
+        else:
+            return None
+
+def high_score():
+    statement = """"SELECT u.UserHandle, SUM(p.Points) AS total 
+    FROM Positions AS p 
+    JOIN Users AS u ON p.UserID = u.UserID
+    WHERE PositionStatus = FALSE 
+    GROUP BY p.UserID ORDER BY total DESC"""
+
+    with pool.connect() as db:
+        result = db.execute(command).fetchall()
+        if not result[0][0]:
+            return result
+        else:
+            return None
+    
+ 
+ 
+
+GROUP BY p.UserID
+ORDER BY total DESC;
 
 
 #when we're done close the connection
