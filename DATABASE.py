@@ -270,15 +270,29 @@ def get_score(userHandle):
         else:
             return None
 
-# looks for a given ID in the database and returns true if found or false if none.
+# looks for a given post ID in the database and returns true if found or false if none.
 def find_id(submissionID):
-    command = "SELECT COUNT(PositionID) FROM Positions WHERE OpenID = %s OR CloseID = %s"
-    escape = (submissionID, submissionID)
+    command = "SELECT COUNT(PostID) FROM Posts WHERE PostID = %s"
+    escape = (submissionID)
     with pool.connect() as db:
         result = db.execute(command, escape).fetchall()
         if result[0][0] == 0:
             return False
         return True
+
+# Adds a post to the posts database that it has been checked by the bot
+def check_post(postID):
+    if find_id(postID):
+        raise Exception("Already exists")
+    command = "INSERT INTO Posts (PostID) VALUES (%s)"
+    escape = (postID,)
+
+    with pool.connect() as db:
+        try:
+            result = db.execute(command, escape)
+        except:
+            raise
+
 
 # Gets the daily 10 highscores. Returns as Username, Points
 def daily_high_score():
@@ -317,7 +331,7 @@ def monthly_high_score():
     FROM Positions AS p 
     JOIN Users AS u ON p.UserID = u.UserID 
     WHERE CloseDate BETWEEN SUBDATE(CURRENT_TIMESTAMP, INTERVAL 1 MONTH) AND CURRENT_TIMESTAMP 
-    GROUP BY p.UserID ORDER BY total DESC LIMIT 10"""
+    GROUP BY p.UserID ORDER BY total DESC LIMIT 50"""
 
     with pool.connect() as db:
         result = db.execute(statement).fetchall()
@@ -332,7 +346,7 @@ def yearly_high_score():
     FROM Positions AS p 
     JOIN Users AS u ON p.UserID = u.UserID 
     WHERE CloseDate BETWEEN SUBDATE(CURRENT_TIMESTAMP, INTERVAL 1 YEAR) AND CURRENT_TIMESTAMP 
-    GROUP BY p.UserID ORDER BY total DESC LIMIT 10"""
+    GROUP BY p.UserID ORDER BY total DESC LIMIT 100"""
 
     with pool.connect() as db:
         result = db.execute(statement).fetchall()
@@ -347,7 +361,7 @@ def high_score():
     FROM Positions AS p 
     JOIN Users AS u ON p.UserID = u.UserID
     WHERE PositionStatus = FALSE 
-    GROUP BY p.UserID ORDER BY total DESC LIMIT 10"""
+    GROUP BY p.UserID ORDER BY total DESC LIMIT 100"""
 
     with pool.connect() as db:
         result = db.execute(statement).fetchall()
