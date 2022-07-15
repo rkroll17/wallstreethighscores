@@ -1,4 +1,3 @@
-from matplotlib.pyplot import text
 import API_key_getter as API
 import praw
 import re
