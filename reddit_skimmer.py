@@ -1,3 +1,4 @@
+from matplotlib.pyplot import text
 import API_key_getter as API
 import praw
 import re
@@ -72,11 +73,13 @@ def search_parse_command():
         if command_title or command:
             if command and not duplicate_flag:
                 text = command[0].split()
-                submission_list.append([submission.id, text[0], submission_user])
+                # empty string is done so that in bot.py the submision user is the same
+                # position across all commands
+                submission_list.append([submission.id, text[0], "", submission_user])
                 duplicate_flag = True
             if command_title and not duplicate_flag:
                 text = command_title[0].split()
-                submission_list.append([submission.id, text[0], submission_user])
+                submission_list.append([submission.id, text[0], "", submission_user])
                 duplicate_flag = True
     return submission_list
 
@@ -85,3 +88,25 @@ def search_parse_command():
 def reply_submission(post_ID, reply_text):
     submission = reddit.submission(post_ID)
     submission.reply(body = reply_text)
+
+def reddit_flairs():
+    flairs = []
+    for template in subreddit.flair.templates:
+        flairs.append(template)
+    return flairs
+
+def award_best_trader_flair(reddit_username):
+    r_flairs = reddit_flairs()
+    subreddit.flair.set(reddit_username, text=r_flairs[0]['text'], flair_template_id=r_flairs[0]['id'])
+
+def award_2nd_best_trader_flair(reddit_username):
+    r_flairs = reddit_flairs()
+    subreddit.flair.set(reddit_username, text=r_flairs[1]['text'], flair_template_id=r_flairs[1]['id'])
+
+def award_3rd_best_trader_flair(reddit_username):
+    r_flairs = reddit_flairs()
+    subreddit.flair.set(reddit_username, text=r_flairs[2]['text'], flair_template_id=r_flairs[2]['id'])
+
+def award_top_100_trader_flair(reddit_username):
+    r_flairs = reddit_flairs()
+    subreddit.flair.set(reddit_username, text=r_flairs[3]['text'], flair_template_id=r_flairs[3]['id'])
