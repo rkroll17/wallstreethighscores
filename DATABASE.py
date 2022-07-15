@@ -370,6 +370,37 @@ def high_score():
         else:
             return None
 
+# adds the ActiveFlare flag from a user in the database
+def add_flare(userHandle):
+    if not find_user(userHandle):
+        raise Exception("User not found")
+    statement = "UPDATE Users SET ActiveFlare = TRUE WHERE UserHandle = %s"
+    escape = (userHandle,)
+    with pool.connect() as db:
+        result = db.execute(statement, escape)
+        if not result:
+            raise Exception("Could not update")
+
+# removes the ActiveFlare flag from a user in the database
+def remove_flare(userHandle):
+    if not find_user(userHandle):
+        raise Exception("User not found")
+    statement = "UPDATE Users SET ActiveFlare = FALSE WHERE UserHandle = %s"
+    escape = (userHandle,)
+    with pool.connect() as db:
+        result = db.execute(statement, escape)
+        if not result:
+            raise Exception("Could not update")
+
+# returns a list of users who currenly have the ActiveFlare flag in the database
+def active_flares():
+    statement = """SELECT UserHandle 
+    FROM Users 
+    WHERE ActiveFlare = TRUE"""
+
+    with pool.connect() as db:
+        result = db.execute(statement).fetchall()
+        return result
 
 #when we're done close the connection
 connector.close()
