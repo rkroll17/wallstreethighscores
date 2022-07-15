@@ -87,7 +87,7 @@ def search_parse_command():
 # does not generate a toast to indicate that action completed successfully
 def reply_submission(post_ID, reply_text):
     submission = reddit.submission(post_ID)
-    submission.reply(body = reply_text)
+    submission.reply(body = reply_text).mod.distinguish(sticky=True)
 
 def reddit_flairs():
     flairs = []
@@ -110,3 +110,6 @@ def award_3rd_best_trader_flair(reddit_username):
 def award_top_100_trader_flair(reddit_username):
     r_flairs = reddit_flairs()
     subreddit.flair.set(reddit_username, text=r_flairs[3]['text'], flair_template_id=r_flairs[3]['id'])
+    
+def make_post(title, selftext):
+    submission = subreddit.submit(title=title, selftext=selftext)
