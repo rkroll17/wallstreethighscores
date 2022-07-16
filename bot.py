@@ -72,8 +72,11 @@ def get_user_overview(user):
     return overview
 
 def get_stock_summary(ticker):
-    profile = st.get_stock_profile(ticker)
-    summary = str(profile['name']) + " is a " + str(profile['finnhubIndustry']) + " company and exchanges on the " + str(profile['exchange']) + ". It is based out of " + str(profile['country']) + " and had its initial public offering on " + str(profile['ipo']) + ". For more information visit " + str(profile['weburl'])
+    try:
+        profile = st.get_stock_profile(ticker)
+        summary = str(profile['name']) + " is a " + str(profile['finnhubIndustry']) + " company and exchanges on the " + str(profile['exchange']) + ". It is based out of " + str(profile['country']) + " and had its initial public offering on " + str(profile['ipo']) + ". For more information visit " + str(profile['weburl'])
+    except Exception as err:
+        summary = "Sorry, I couldn't find stock info for " + ticker
     return summary
     
 def invalid_command(id, command, user):
@@ -164,7 +167,7 @@ def post_alltime_leaderboard():
         
     rs.make_post(title, selftext)
             
-#read_posts(0)
+read_posts(0)
 #get_user_overview("TestUser1")
 # post_daily_leaderboard()
 # post_weekly_leaderboard()

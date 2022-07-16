@@ -37,9 +37,27 @@ def search_parse_command():
         submission_body = submission.selftext
         submission_title = submission.title
         submission_user = submission.author.name
+        
+        submission_text = submission_title + " " + submission_body
+        text_list = submission_text.split()
+        arg1 = ""
+        arg2 = ""
+        found = False
+        for i in text_list:
+            if i[0] == "!":
+                arg1 = i
+                found = True
+            elif found == True:
+                arg2 = i
+                break
+        
+        # print(arg1)
+        # print(arg2)
+        submission_list.append([submission.id, arg1, arg2, submission_user])
+        return submission_list
 
         # checks for buy command
-        command = regex_buy.search(submission_body)
+        command = regex_buy.search(submission_text)
         command_title = regex_buy.search(submission_title)
         
         duplicate_flag = False
