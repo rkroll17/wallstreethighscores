@@ -54,50 +54,49 @@ def search_parse_command():
         # print(arg1)
         # print(arg2)
         submission_list.append([submission.id, arg1, arg2, submission_user])
-        return submission_list
 
         # checks for buy command
-        command = regex_buy.search(submission_text)
-        command_title = regex_buy.search(submission_title)
+        # command = regex_buy.search(submission_text)
+        # command_title = regex_buy.search(submission_title)
         
-        duplicate_flag = False
-        if command_title or command:
-            if command and not duplicate_flag:
-                text = command[0].split()
-                submission_list.append([submission.id, text[0], text[1], submission_user])
-                duplicate_flag = True
-            if command_title and not duplicate_flag:
-                text = command_title[0].split()
-                submission_list.append([submission.id, text[0], text[1], submission_user])
-                duplicate_flag = True
-        # checks for sell command
-        command = regex_sell.search(submission_body)
-        command_title = regex_sell.search(submission_title)
-        duplicate_flag = False
-        if command_title or command:
-            if command and not duplicate_flag:
-                text = command[0].split()
-                submission_list.append([submission.id, text[0], text[1], submission_user])
-                duplicate_flag = True
-            if command_title and not duplicate_flag:
-                text = command_title[0].split()
-                submission_list.append([submission.id, text[0], text[1], submission_user])
-                duplicate_flag = True
-        # checks for myscore command
-        command = regex_myscore.search(submission_body)
-        command_title = regex_myscore.search(submission_title)
-        duplicate_flag = False
-        if command_title or command:
-            if command and not duplicate_flag:
-                text = command[0].split()
-                # empty string is done so that in bot.py the submision user is the same
-                # position across all commands
-                submission_list.append([submission.id, text[0], "", submission_user])
-                duplicate_flag = True
-            if command_title and not duplicate_flag:
-                text = command_title[0].split()
-                submission_list.append([submission.id, text[0], "", submission_user])
-                duplicate_flag = True
+        # duplicate_flag = False
+        # if command_title or command:
+        #     if command and not duplicate_flag:
+        #         text = command[0].split()
+        #         submission_list.append([submission.id, text[0], text[1], submission_user])
+        #         duplicate_flag = True
+        #     if command_title and not duplicate_flag:
+        #         text = command_title[0].split()
+        #         submission_list.append([submission.id, text[0], text[1], submission_user])
+        #         duplicate_flag = True
+        # # checks for sell command
+        # command = regex_sell.search(submission_body)
+        # command_title = regex_sell.search(submission_title)
+        # duplicate_flag = False
+        # if command_title or command:
+        #     if command and not duplicate_flag:
+        #         text = command[0].split()
+        #         submission_list.append([submission.id, text[0], text[1], submission_user])
+        #         duplicate_flag = True
+        #     if command_title and not duplicate_flag:
+        #         text = command_title[0].split()
+        #         submission_list.append([submission.id, text[0], text[1], submission_user])
+        #         duplicate_flag = True
+        # # checks for myscore command
+        # command = regex_myscore.search(submission_body)
+        # command_title = regex_myscore.search(submission_title)
+        # duplicate_flag = False
+        # if command_title or command:
+        #     if command and not duplicate_flag:
+        #         text = command[0].split()
+        #         # empty string is done so that in bot.py the submision user is the same
+        #         # position across all commands
+        #         submission_list.append([submission.id, text[0], "", submission_user])
+        #         duplicate_flag = True
+        #     if command_title and not duplicate_flag:
+        #         text = command_title[0].split()
+        #         submission_list.append([submission.id, text[0], "", submission_user])
+        #         duplicate_flag = True
     return submission_list
 
 # replys to a specific submission. requires ID and reply text
@@ -130,3 +129,4 @@ def award_top_100_trader_flair(reddit_username):
     
 def make_post(title, selftext):
     submission = subreddit.submit(title=title, selftext=selftext)
+    return submission.id

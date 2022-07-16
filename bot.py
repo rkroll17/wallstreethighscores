@@ -19,20 +19,25 @@ def buy_stock(id, ticker, user):
             if db.find_user(user) == None:
                 db.create_user(user)
             db.open_position(user, ticker, ticker_price, id)
+            reply_text = user + ", you have bought " + ticker + " @ $" + str(ticker_price) + "\n\n" + get_stock_summary(ticker)
         except Exception as err:
             print(err)
-        reply_text = user + ", you have bought " + ticker + " @ $" + str(ticker_price) + "\n\n" + get_stock_summary(ticker)
+            reply_text = "You already have a position open for " + ticker
     #print(reply_text)
     rs.reply_submission(id, reply_text)
     
     
 # send position to database and build/send reply comment
 def sell_stock(id, ticker, user):
-    ticker_price = st.get_stock_price(ticker)
-    points = calc_points(db.get_open_price(user, ticker), ticker_price)
-    db.close_position(user, ticker, ticker_price, points, id)
-    reply_text = user + ", you have sold " + ticker + " @ $" + str(ticker_price) + "\n\n" + get_user_overview(user)
-    print(reply_text)
+    try:
+        ticker_price = st.get_stock_price(ticker)
+        points = calc_points(db.get_open_price(user, ticker), ticker_price)
+        db.close_position(user, ticker, ticker_price, points, id)
+        reply_text = user + ", you have sold " + ticker + " @ $" + str(ticker_price) + "\n\n" + get_user_overview(user)
+    except Exception as err:
+        print(err)
+        reply_text = "You do not have a position open for " + ticker
+    # print(reply_text)
     rs.reply_submission(id, reply_text)
     
 
@@ -120,22 +125,26 @@ def get_leaderboard(data):
 def post_daily_leaderboard():
     title = "Today's Top 10 Traders "
     selftext = get_leaderboard(db.daily_high_score())
-    rs.make_post(title, selftext)
+    id = rs.make_post(title, selftext)
+    db.check_post(id)
 
 def post_weekly_leaderboard():
     title = "Last Week's Top 10 Traders "
     selftext = get_leaderboard(db.weekly_high_score())
-    rs.make_post(title, selftext)
+    id = rs.make_post(title, selftext)
+    db.check_post(id)
 
 def post_monthly_leaderboard():
     title = "Last Month's Top 10 Traders "
     selftext = get_leaderboard(db.monthly_high_score())
-    rs.make_post(title, selftext)
+    id = rs.make_post(title, selftext)
+    db.check_post(id)
 
 def post_yearly_leaderboard():
     title = "Last Year's Top 10 Traders "
     selftext = get_leaderboard(db.yearly_high_score())
-    rs.make_post(title, selftext)
+    id = rs.make_post(title, selftext)
+    db.check_post(id)
 
 def post_alltime_leaderboard():
     # remove flairs from old high scorers
