@@ -5,12 +5,15 @@ import DATABASE as db
 
 reddit_rq_counter = int
 
-def calc_points(open, close):
+def calc_points(open, close, multiplier):
     points = int((close - open) / open * 10000)
+    if multiplier != 0:
+        points *= multiplier
     return points
     
 # send position to database and build/send reply comment
-def buy_stock(id, ticker, user):
+# TODO add multiplier functionality
+def buy_stock(id, ticker, user, multiplier):
     ticker_price = st.get_stock_price(ticker)
     if ticker_price == 0:
         reply_text = "Sorry, " + user + ". " + ticker + " is an invalid ticker or is not supported by our bot."
@@ -18,8 +21,11 @@ def buy_stock(id, ticker, user):
         try:
             if db.find_user(user) == None:
                 db.create_user(user)
-            db.open_position(user, ticker, ticker_price, id)
-            reply_text = user + ", you have bought " + ticker + " @ $" + str(ticker_price) + "\n\n" + get_stock_summary(ticker)
+            db.open_position(user, ticker, ticker_price, id, confidence=multiplier)
+            if multiplier == 1:
+                reply_text = user + ", you have bought " + ticker + " @ $" + str(ticker_price) + "\n\n" + get_stock_summary(ticker)
+            elif multiplier == -1:
+                reply_text = user + ", you are bearish on " + ticker + " @ $" + str(ticker_price) + "\n\n" + get_stock_summary(ticker)
         except Exception as err:
             print(err)
             reply_text = "You already have a position open for " + ticker
@@ -31,7 +37,7 @@ def buy_stock(id, ticker, user):
 def sell_stock(id, ticker, user):
     try:
         ticker_price = st.get_stock_price(ticker)
-        points = calc_points(db.get_open_price(user, ticker), ticker_price)
+        points = calc_points(db.get_open_price(user, ticker), ticker_price, db.get_open_confidence(user, ticker))
         db.close_position(user, ticker, ticker_price, points, id)
         reply_text = user + ", you have sold " + ticker + " @ $" + str(ticker_price) + "\n\n" + get_user_overview(user)
     except Exception as err:
@@ -89,7 +95,7 @@ def invalid_command(id, command, user):
     reply_text = "Sorry " + user + ": " + command + " is not a valid command"
     rs.reply_submission(id, reply_text)
     
-    
+# TODO add more commands like inverse buying a stock
 def read_posts(count):
     reddit_rq_counter = count
     posts = rs.search_parse_command()
@@ -100,12 +106,14 @@ def read_posts(count):
             print(str(p[0]))
         elif reddit_rq_counter < 59:
             if p[1].upper() == "!BUY":
-                buy_stock(p[0], p[2], p[3])
+                buy_stock(p[0], p[2], p[3], 1)
             elif p[1].upper() == "!SELL":
                 sell_stock(p[0], p[2], p[3])
             elif p[1].upper() == "!MY_SCORE":
                 print(get_user_overview(p[3]))
                 rs.reply_submission(p[0], get_user_overview(p[3]))
+            elif p[1].upper() == "!BEAR":
+                buy_stock(p[0], p[2], p[3], -1)
             else:
                 invalid_command(p[0], p[1], p[3])
             reddit_rq_counter += 1
@@ -175,9 +183,13 @@ def post_alltime_leaderboard():
         i += 1
         
     rs.make_post(title, selftext)
+
+# TODO read comments and do commands
+def read_comments():
+    pass
             
 # read_posts(0)
-#get_user_overview("TestUser1")
+# get_user_overview("TestUser1")
 # post_daily_leaderboard()
 # post_weekly_leaderboard()
 # post_monthly_leaderboard()

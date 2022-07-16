@@ -207,6 +207,13 @@ def get_open_price(userHandle, ticker):
         raise
     return result[0][4]
 
+def get_open_confidence(userHandle, ticker):
+    try:
+        result = get_open_ticker(userHandle, ticker)
+    except:
+        raise
+    return result[0][8]
+
 # Closes the position given the userHandle (string), ticker (string), close price (double),
 # points (int) the position was worth, and optionally the close date (format: YYYY-MM-DD hh:mm:ss)
 def close_position(userHandle, ticker, closePrice, points, submissionID, closeDate = None):

@@ -99,6 +99,10 @@ def search_parse_command():
         #         duplicate_flag = True
     return submission_list
 
+# TODO get comments with mention to u/wallstreethighscores
+def get_comments():
+    pass
+
 # replys to a specific submission. requires ID and reply text
 # does not generate a toast to indicate that action completed successfully
 def reply_submission(post_ID, reply_text):
