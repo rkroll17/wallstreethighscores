@@ -176,7 +176,7 @@ def post_alltime_leaderboard():
         
     rs.make_post(title, selftext)
             
-read_posts(0)
+# read_posts(0)
 #get_user_overview("TestUser1")
 # post_daily_leaderboard()
 # post_weekly_leaderboard()
