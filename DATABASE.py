@@ -1,3 +1,5 @@
+#see https://github.com/GoogleCloudPlatform/cloud-sql-python-connector for more info
+
 # The Cloud SQL Python Connector can be used along with SQLAlchemy using the
 # 'creator' argument to 'create_engine'
 
